@@ -3,7 +3,6 @@
 /// More dartdocs go here.
 library;
 
-export 'src/patterns_base.dart';
 export 'src/command/command.dart';
-
-// TODO: Export any libraries intended for clients of this package.
+export 'src/observer/event.dart';
+export 'src/observer/observer.dart';
