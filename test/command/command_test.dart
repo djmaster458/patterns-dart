@@ -1,14 +1,14 @@
 import 'package:test/test.dart';
 import 'package:patterns/src/command/command.dart';
 
-class _TestCommand implements Command {
+class _TestCommand implements ICommand {
   final void Function() _execute;
   _TestCommand(this._execute);
   @override
   void execute() => _execute();
 }
 
-class _TestUndoableCommand implements UndoableCommand {
+class _TestUndoableCommand implements IUndoableCommand {
   final void Function() _execute;
   final void Function() _undo;
   _TestUndoableCommand(this._execute, this._undo);
