@@ -1,7 +1,14 @@
 import 'package:patterns/patterns.dart';
 import 'package:test/test.dart';
 
-class _RecordingState implements State<String, int> {
+class _TestInput {
+  final String signal;
+  final int? context;
+
+  _TestInput(this.signal, [this.context]);
+}
+
+class _RecordingState implements State<_TestInput> {
   final List<String> calls = [];
   String? lastSignal;
   int? lastContext;
@@ -13,21 +20,36 @@ class _RecordingState implements State<String, int> {
   void onExit() => calls.add('exit');
 
   @override
-  void onSignal(String signal, [int? context]) {
+  void handleInput(_TestInput input) {
     calls.add('signal');
-    lastSignal = signal;
-    lastContext = context;
+    lastSignal = input.signal;
+    lastContext = input.context;
+  }
+}
+
+class _AnotherRecordingState implements State<_TestInput> {
+  final List<String> calls = [];
+
+  @override
+  void onEnter() => calls.add('enter');
+
+  @override
+  void onExit() => calls.add('exit');
+
+  @override
+  void handleInput(_TestInput input) {
+    calls.add('signal');
   }
 }
 
 void main() {
   group('SimpleStateMachine', () {
     test('enters, signals, and exits states', () {
-      final machine = SimpleStateMachine<String, int>();
+      final machine = SimpleStateMachine<_TestInput>();
       final state = _RecordingState();
 
       machine.changeState(state);
-      machine.sendSignal('advance', 42);
+      machine.sendInput(_TestInput('advance', 42));
 
       expect(machine.isActive, isTrue);
       expect(machine.currentState, same(state));
@@ -43,7 +65,7 @@ void main() {
     });
 
     test('exits the old state before entering the new state', () {
-      final machine = SimpleStateMachine<String, int>();
+      final machine = SimpleStateMachine<_TestInput>();
       final firstState = _RecordingState();
       final secondState = _RecordingState();
 
@@ -56,7 +78,7 @@ void main() {
     });
 
     test('changing to the current state exits and re-enters it', () {
-      final machine = SimpleStateMachine<String, int>();
+      final machine = SimpleStateMachine<_TestInput>();
       final state = _RecordingState();
 
       machine.changeState(state);
@@ -66,17 +88,44 @@ void main() {
       expect(machine.currentState, same(state));
     });
 
-    test('ignores signals while stopped and allows stopping repeatedly', () {
-      final machine = SimpleStateMachine<String, int>();
+    test('ignores signals while stopped', () {
+      final machine = SimpleStateMachine<_TestInput>();
       final state = _RecordingState();
 
-      machine.sendSignal('ignored');
+      machine.sendInput(_TestInput('ignored'));
+      machine.changeState(state);
+      machine.stop();
+      machine.sendInput(_TestInput('also ignored'));
+
+      expect(state.calls, ['enter', 'exit']);
+    });
+
+    test('allows repeated stopping', () {
+      final machine = SimpleStateMachine<_TestInput>();
+      final state = _RecordingState();
+
       machine.changeState(state);
       machine.stop();
       machine.stop();
-      machine.sendSignal('also ignored');
 
       expect(state.calls, ['enter', 'exit']);
+      expect(machine.isActive, isFalse);
+      expect(machine.currentState, isNull);
+    });
+
+    test('handles multiple states correctly', () {
+      final machine = SimpleStateMachine<_TestInput>();
+      final firstState = _RecordingState();
+      final secondState = _AnotherRecordingState();
+
+      machine.changeState(firstState);
+      machine.sendInput(_TestInput('first'));
+      machine.changeState(secondState);
+      machine.sendInput(_TestInput('second'));
+      machine.stop();
+
+      expect(firstState.calls, ['enter', 'signal', 'exit']);
+      expect(secondState.calls, ['enter', 'signal', 'exit']);
     });
   });
 }
