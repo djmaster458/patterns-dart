@@ -6,4 +6,4 @@ library;
 export 'src/command/command.dart';
 export 'src/observer/event.dart';
 export 'src/observer/observer.dart';
-export 'src/state/state_machine_class.dart';
+export 'src/state/state_machine.dart';
