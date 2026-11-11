@@ -3,6 +3,7 @@
 /// More dartdocs go here.
 library;
 
+export 'src/allocation/object_pool.dart';
 export 'src/command/command.dart';
 export 'src/observer/event.dart';
 export 'src/observer/observer.dart';

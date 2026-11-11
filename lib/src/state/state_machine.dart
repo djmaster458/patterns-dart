@@ -46,19 +46,3 @@ class SimpleStateMachine<T> {
     _currentState?.handleInput(input);
   }
 }
-
-/// A hierarchical state machine that manages nested states and sends inputs to the active leaf state.
-/// 
-/// State's can defer input to their parent state if they cannot handle it themselves.
-/// `onEnter` is called from parent to child during state activation.
-/// `onExit` is called from child to parent during state deactivation.
-/// 
-/// Transitions can only be initiated when a transition is not active. This means
-/// that transitions can never be triggered from an exit signal handler and they can only
-/// be triggered from an entry signal handler if the current state is the target state
-/// (thus there are not more entry signals that are going to be sent).
-/// 
-/// [T] represents the type of input the state machine can handle.
-class HeirarchicalStateMachine<T> {
-  /// TODO: Implement hierarchical state machine logic, including:
-}
