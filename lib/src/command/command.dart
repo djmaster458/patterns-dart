@@ -1,5 +1,6 @@
 /// Represents a command that can be executed.
 abstract interface class ICommand {
+  /// Executes the command.
   void execute();
 }
 
