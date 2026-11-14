@@ -9,5 +9,6 @@ export 'src/command/command.dart';
 export 'src/event_queue/event_queue.dart';
 export 'src/observer/event.dart';
 export 'src/observer/observer.dart';
+export 'src/randomness/lfsr.dart';
 export 'src/state/resolver.dart';
 export 'src/state/state_machine.dart';
